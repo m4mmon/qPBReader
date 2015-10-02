@@ -1,0 +1,15 @@
+#!/bin/sh
+# config
+QT4=/usr/local/QtPb483
+PBSDK=/usr/local/PBSDK11a/FRSCSDK
+
+
+# used in some .pro as a component of the path to the appropriate xslt sdk dir
+export XSLT_BUILD=pb
+
+# define SYSROOT, is used in some .pro as prefix for libxml include path
+export SYSROOT=$PBSDK/arm-none-linux-gnueabi/sysroot
+
+# add qt tools for pb and pbsdk cross-build tools in path
+export PATH=$QT4/bin:$PBSDK/bin:$PATH
+

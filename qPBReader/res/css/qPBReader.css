@@ -1,0 +1,339 @@
+/* -------------------------------------------------------------------------- */
+
+* {
+/* disable for pc, else blocks input in inspector */
+   qproperty-focusPolicy: NoFocus;
+
+   background-color: white;
+   font: 26pt "Liberation Sans";
+}
+
+QPushButton {
+   border-color: black;
+   border-style: none;
+   border-width: 1px;
+   icon-size: 90px;
+}
+
+QCheckBox::indicator {
+   min-width: 19px;
+   min-height: 31px;
+}
+
+QCheckBox::indicator:checked {
+   image: url(":checkbox_on.bmp");
+}
+
+QCheckBox::indicator:!checked {
+   image: url(":checkbox_off.bmp");
+}
+
+qPBReaderSeparatorWidget {
+   border-style: dotted;
+}
+
+qPBReaderVSeparatorWidget {
+   border-style: dotted;
+   border-width: 1px 0px 0px 0px;
+   margin: 0px 5px 0px 5px;
+}
+
+/* -------------------------------------------------------------------------- */
+
+qPBReaderDialog {
+   border-style: solid;
+   border-color: black;
+   border-width: 5px;
+   border-radius: 8px;
+}
+
+/* -------------------------------------------------------------------------- */
+
+qPBReaderDialogHeader {
+   border-style: solid;
+   border-color: black;
+   background-color: black;
+   padding-left: 0px;
+   min-height: 67px;
+   max-height: 67px;
+   border-top-left-radius: 8px;
+   border-top-right-radius: 8px;
+   border-bottom-right-radius: 1px;
+   border-bottom-left-radius: 1px;
+}
+qPBReaderDialogHeader>* {
+   color: white;
+   background-color: black;
+   border-width: 1px;
+   border-style: solid;
+}
+
+qPBReaderDialogHeader>QLabel#captionLabel {
+   font: bold;
+   padding-left: 30px;
+   background-color: black;
+   border-top-left-radius: 8px;
+   border-top-right-radius: 8px;
+   border-bottom-right-radius: 1px;
+   border-bottom-left-radius: 1px;
+}
+
+qPBReaderDialogHeader>QPushButton#exitButton {
+   min-height: 56px;
+   max-height: 56px;
+   min-width:  56px;
+   max-width:  56px;
+   padding-right: 3px;
+   border-top-right-radius: 8px;
+/*   image: url(":exit_dlg.bmp");*/
+   image: url(":button_close.bmp");
+}
+
+/* -------------------------------------------------------------------------- */
+
+qPBReaderVerticalWidget {
+   border-color: black;
+   border-width: 5px;
+   border-style: solid;
+   border-radius: 8px;
+   padding: 3px;
+}
+
+/*
+qPBReaderVerticalWidget>* {
+   border-width: 15px;
+   margin: 0px 5px 0px 5px;
+}
+*/
+
+qPBReaderVerticalWidget>QPushButton, qPBReaderVerticalWidget>QCheckBox {
+   min-height: 31px;
+   max-height: 62px;
+   text-align: left;
+   border-style: none;
+   padding: 0px 20px 0px 20px;
+   margin: 0px 5px 5px 5px;
+}
+
+qPBReaderVerticalWidget>QLabel#captionLabel {
+}
+
+qPBReaderVerticalWidget>QCheckBox {
+   spacing: 5px;
+}
+
+qPBReaderVerticalWidget>QCheckBox::indicator {
+   width: 1.2em;
+   height: 1.2em;
+}
+
+/* -------------------------------------------------------------------------- */
+
+qPBReaderFontSelectorWidget, qPBReaderTypeSelectorWidget {
+   border-color: black;
+   border-width: 5px;
+   border-style: solid;
+   border-radius: 8px;
+   padding: 3px;
+   margin: 0px 0px 8px 0px;
+}
+
+qPBReaderFontSelectorWidget>QLabel#fontLabel, qPBReaderTypeSelectorWidget>QLabel#selectorLabel {
+   font: 16pt "Liberation Sans";
+   border-style: none;
+   border-width: 1px;
+   font: bold;
+   max-height: 62px;
+   min-height: 20px;
+   max-width: 110px;
+   min-width: 110px;
+   margin: 0px 0px 0px 0px;
+}
+
+/*
+QScrollBar:horizontal {
+    border: 2px solid grey;
+    background: #32CC99;
+    height: 15px;
+    margin: 0px 60px 0 60px;
+}
+QScrollBar::handle:horizontal {
+    background: white;
+    min-width: 60px;
+}
+QScrollBar::add-line:horizontal {
+    border: 2px solid grey;
+    background: #32CC99;
+    width: 60px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal {
+    border: 2px solid grey;
+    background: #32CC99;
+    width: 60px;
+    subcontrol-position: left;
+    subcontrol-origin: margin;
+}
+*/
+/*
+QComboBox#itemSelector {
+   border-style: solid;
+   max-height: 30px;
+   min-height: 30px;
+   border-width: 0px;
+   margin: 0px 0px 0px 0px;
+}
+*/
+QComboBox {
+   border-style: solid;
+   min-height: 45px;
+   max-height: 45px;
+   border-width: 1px;
+   margin: 0px 0px 0px 0px;
+}
+
+QComboBox::drop-down {
+   border-style: solid;
+   border-width: 1px;
+   min-width: 45px;
+   max-width: 45px;
+   image: url(":combo-down.bmp");
+}
+
+QComboBox::drop-down:checked {
+   image: url(":combo-up.bmp");
+}
+QComboBox QScrollBar:vertical {
+   border-color: black;
+   border-style: solid;
+   border-width: 1px;
+   min-width: 60px;
+   max-width: 60px;
+   margin: 60px 0 60px 0;
+}
+
+QComboBox QScrollBar::handle:vertical {
+   background: black;
+   min-width: 60px;
+   max-width: 60px;
+}
+
+QComboBox QScrollBar::add-line:vertical {
+   border-width: 1px 1px 1px 1px;
+   border-color: black;
+   border-style: solid;
+   height: 60px;
+   subcontrol-position: bottom;
+   subcontrol-origin: margin;
+   image: url(":list-down.bmp");
+}
+QComboBox QScrollBar::sub-line:vertical {
+   border-width: 1px 1px 1px 1px;
+   border-color: black;
+   border-style: solid;
+   height: 60px;
+   subcontrol-position: top;
+   subcontrol-origin: margin;
+   image: url(":list-up.bmp");
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+/*
+qPBReaderSetValueWidgetWithLabel {
+   margin: 0px 0px 0px 0px;
+}
+
+qPBReaderSetValueWidgetWithLabel {
+   border-color: black;
+   border-width: 5px;
+   border-style: solid;
+   border-radius: 8px;
+   padding: 3px;
+}
+qPBReaderSetValueWidgetWithLabel>QLabel#setValueLabel {
+   border-style: none;
+   border-width: 1px;
+   font: bold;
+   max-height: 62px;
+   min-height: 62px;
+   max-width: 104px;
+   min-width: 104px;
+   margin: 0px 0px 3px 0px;
+}
+*/
+qPBReaderSetValueWidget {
+   border-color: black;
+   border-width: 5px;
+   border-style: solid;
+   border-radius: 8px;
+   padding: 3px;
+}
+
+qPBReaderSetValueWidget>qPBReaderHSeparatorWidget {
+   border-style: dotted;
+   border-width: 0px 0px 0px 1px;
+   margin: 0px 0px 0px 0px;
+}
+
+qPBReaderSetValueWidget>QLabel#scaleLabel {
+   border-style: none;
+   border-width: 1px;
+   font: bold;
+   max-height: 62px;
+   min-height: 62px;
+   max-width: 104px;
+   min-width: 104px;
+   margin: 0px 0px 3px 0px;
+}
+
+qPBReaderSetValueWidget>QPushButton#decrementButton {
+   border-style: none;
+   font: bold;
+   max-height: 62px;
+   min-height: 62px;
+   max-width: 104px;
+   min-width: 104px;
+   border-width: 0px;
+   margin: 0px 0px 8px 8px;
+   image: url(":minus.bmp");
+}
+
+qPBReaderSetValueWidget>QPushButton#decrementButton:disabled {
+   image: url(":minus-disabled.bmp");
+}
+
+qPBReaderSetValueWidget>QPushButton#incrementButton {
+   border-style: none;
+   font: bold;
+   max-height: 62px;
+   min-height: 62px;
+   max-width: 104px;
+   min-width: 104px;
+   border-width: 0px;
+   margin: 0px 8px 8px 0px;
+   image: url(":plus.bmp");
+}
+
+qPBReaderSetValueWidget>QPushButton#incrementButton:disabled {
+   image: url(":plus-disabled.bmp");
+}
+
+/* -------------------------------------------------------------------------- */
+
+qPBReaderZoomWidget>QPushButton#decrementButton {
+   image: url(":zoom-minus.bmp");
+}
+
+qPBReaderZoomWidget>QPushButton#incrementButton {
+   image: url(":zoom-plus.bmp");
+}
+
+qPBReaderTextLayoutSettingsDialog>qPBReaderVerticalWidget>qPBReaderSetValueWidget>QLabel {
+   font: 16pt "Liberation Sans";
+}
+
+/* -------------------------------------------------------------------------- */

@@ -1,0 +1,257 @@
+What is needed to rebuild qPBReader?
+
+I am a windows user, but for this task, I exclusively worked on linux.
+If you have linux, good.
+If you have windows, use a virtual machine.
+I installed a debian distribution, no gui but X11, and accessed the machine
+with putty and displayed text editor thanks to an X server running on the
+windows host.
+
+Most of development was made as x86 build, with occasional PB target builds for
+testing.
+
+
+What is used inside the project:
+
+- Qt
+- Calibre javascript framework for paged rendering.
+  Since I never developed with Qt/webkit before, I also ripped and more or
+  less ported Kovid's ebook viewer.
+  http://calibre-ebook.com/
+- Gilles Vollant's miniunz, part of the MiniZip project
+  http://www.winimage.com/zLibDll/minizip.html
+  I have included the required source files directly in the project, I hope this
+  does not violate any copyright.
+- libxslt because QtXmlQuery with Qt 4.8 does not support xsl:output and it
+  was required to transform ncx into xhtml without kludges.
+
+Tips, and chunks of code found by google :)
+
+Qt build hints from:
+http://www.the-ebook.org/forum/viewtopic.php?p=832963#832963
+
+--------------------------------------------------------------------------------
+ 1 - Pocketbook sdk
+--------------------------------------------------------------------------------
+https://github.com/pocketbook-free/sdkrelease_1_1a
+
+Install it anywhere. I will refer to the /path/to/sdk/FRSCSDK directory as
+"$PBSDK".
+
+
+Very useful: Pocketbook sshd
+http://www.mobileread.com/forums/showthread.php?t=159636
+
+It allows launching commands directly on the device, and exchanging files
+between computer and pocketbook, without plugging cables.
+
+
+--------------------------------------------------------------------------------
+ 2 - Qt 4.8
+--------------------------------------------------------------------------------
+I used the same version as the Qt libraries delivered on the Pocketbook 623
+(Qt 4.8.3).
+https://download.qt.io/archive/qt/4.8/4.8.3/
+Get qt-everywhere-opensource-src-4.8.3.tar.gz
+
+You would need a native compiler (e.g. gcc) to build qmake tools for your build
+machine, and the cross compiler provided with the SDK.
+
+To ease development, it is easier to build and run on the linux computer, and
+make small adjustments and real tests only on the pocketbook.
+
+Extract it somewhere, let's say /development/qt-everywhere-opensource-src-4.8.3
+
+
+a/ Qt on the build machine.
+I built the Qt SDK myself, it is a pretty straightforward process you can
+completely avoid by using some apt-get commands (or equivalent for your linux
+distribution). Dependencies like X11-dev etc. are required.
+
+
+
+In order to get hyphenation working, I applied the following patch
+
+https://bugs.webkit.org/attachment.cgi?id=132152&action=review
+
+to src/3rdparty/webkit/Source/WebCore/platform/text/qt/TextBreakIteratorQt.cpp
+
+To get a SDK as similar as possible as the Pocketbook one, I used the following
+configure
+command:
+mkdir /development/Qt483_pcbuild
+cd /development/Qt483_pcbuild
+/development/qt-everywhere-opensource-src-4.8.3/configure \
+       -prefix /development/Qt483 \
+       -confirm-license \
+       -opensource -release \
+       -no-qvfb \
+       -depths 16,32 \
+       -qt-libjpeg \
+       -qt-libmng \
+       -qt-libpng \
+       -qt-zlib \
+       -qt-mouse-linuxtp \
+       -no-accessibility \
+       -no-qt3support \
+       -exceptions \
+       -xmlpatterns \
+       -no-declarative \
+       -no-dbus \
+       -release \
+       -fast \
+       -no-phonon \
+       -no-phonon-backend \
+       -no-opengl \
+       -nomake examples \
+       -nomake demos
+
+Adjust pathes as needed, note the -prefix value, it is my final installation
+target.
+
+If successful, you can then:
+make
+and finally :
+make install
+(sudo is required to launch this last command if -prefix value is somewhere
+you cannot write as a user).
+
+
+
+b/ Qt Pocketbook build preparation
+
+For the x86 build, everything is already setup inside Qt, it will grab the
+proper tools etc.
+For the cross build, we have to tell Qt which target to use, by indicating a
+specific "mkspec".
+By digging inside Pocketbook Qt binaries, I discovered the developers used
+"linux-arm-gnueabi-g++".
+We have to modify it to make it use the cross compiler delivered with the SDK.
+This is done by editing
+/development/qt-everywhere-opensource-src-4.8.3/mkspec/linux-arm-gnueabi-g++/qmake.conf
+
+I have to admit I have more or less blindly used some of the options used for
+the Qt 4.8.1 you can
+find here:
+http://www.the-ebook.org/forum/viewtopic.php?p=832963#832963
+
+I have something like:
+
+
+
+include(../common/linux.conf)
+include(../common/gcc-base-unix.conf)
+include(../common/g++-unix.conf)
+include(../common/qws.conf)
+
+QMAKE_CFLAGS_RELEASE     = -O2 -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64 -march=armv6
+QMAKE_CFLAGS_DEBUG       = -O0 -g -fno-omit-frame-pointer -march=armv6
+QMAKE_CFLAGS_SHLIB       = -fPIC
+QMAKE_CFLAGS_YACC        = -Wno-unused -Wno-parentheses
+QMAKE_CFLAGS_THREAD      = -D_REENTRANT
+QMAKE_CFLAGS_HIDESYMS    = -fvisibility=hidden
+
+QMAKE_CXXFLAGS           = $$QMAKE_CFLAGS -DQT_NO_QWS_TRANSFORMED
+QMAKE_CXXFLAGS_RELEASE  += $$QMAKE_CFLAGS_RELEASE
+QMAKE_CXXFLAGS_DEBUG    += $$QMAKE_CFLAGS_DEBUG
+QMAKE_CXXFLAGS_SHLIB     = $$QMAKE_CFLAGS_SHLIB
+QMAKE_CXXFLAGS_YACC      = $$QMAKE_CFLAGS_YACC
+QMAKE_CXXFLAGS_THREAD    = $$QMAKE_CFLAGS_THREAD
+QMAKE_CXXFLAGS_HIDESYMS  = $$QMAKE_CFLAGS_HIDESYMS -fvisibility-inlines-hidden
+
+DEFINES                 += QT_LINUXBASE OPENSSL_NO_TLSEXT Q_OS_POCKETBOOK
+
+# modifications to g++.conf
+QMAKE_CC                 = arm-none-linux-gnueabi-gcc
+QMAKE_CXX                = arm-none-linux-gnueabi-g++
+QMAKE_LINK               = arm-none-linux-gnueabi-g++
+QMAKE_LINK_SHLIB         = arm-none-linux-gnueabi-g++
+QMAKE_LIBS               = -lrt -linkview -lbookstate
+
+# modifications to linux.conf
+QMAKE_AR                 = arm-none-linux-gnueabi-ar cqs
+QMAKE_OBJCOPY            = arm-none-linux-gnueabi-objcopy
+QMAKE_STRIP              = arm-none-linux-gnueabi-strip
+
+load(qt_config)
+
+
+
+I did not include the path to the cross tools, they have to be in the path when
+you configure/make Qt.
+It is easier to move SDK this way than also modifying mkspecs.
+Note I force the link against PB SDK libraries directly here, it simplifies qt
+project for building on PC (obviously without PB SDK).
+
+
+
+c/ Qt Pocketbook build
+Almost the same process as for the PC build:
+
+mkdir /development/Qt483_pcbuild
+cd /development/Qt483_pcbuild
+/development/qt-everywhere-opensource-src-4.8.3/configure \
+       -prefix /development/QtPB483 \
+       -R /ebrmain/lib \
+       -confirm-license \
+       -opensource -release \
+       -xplatform linux-arm-gnueabi-g++ \
+       -qpa \
+       -arch arm \
+       -no-qvfb \
+       -depths 16,32 \
+       -qt-libjpeg \
+       -qt-libmng \
+       -qt-libpng \
+       -qt-zlib \
+       -qt-mouse-linuxtp \
+       -no-accessibility \
+       -no-qt3support \
+       -exceptions \
+       -xmlpatterns \
+       -no-declarative \
+       -no-dbus \
+       -release \
+       -fast \
+       -no-phonon \
+       -no-phonon-backend \
+       -no-opengl \
+       -nomake examples \
+       -nomake demos
+
+Note I used a different -prefix value of course, choose to hard-code
+/ebrmain/lib library (-R) path because I wanted the binaries to be as exactly
+as on the device.
+
+The important options are:
+ -xplatform: the value indicates which mkspec to use (the one modified at the
+             previous step)
+ -qpa      : this is the Platform Abstraction. Network and display (and more)
+             operations are delegated to plugins. For example, PB developers
+             made a library to manage the e-ink specifics inside a
+             pocketbook-specific platform plugin.
+ -arch     : it indicates the target architecture.
+
+
+If successful, you can then:
+make
+and finally :
+make install
+
+--------------------------------------------------------------------------------
+ 3 - qEbookReader build
+--------------------------------------------------------------------------------
+Extract the sources anywhere, then:
+qmake
+and:
+make
+
+Use the appropriate qmake (/development/QtPB483/bin/qmake for the pocketbook, or
+(/development/Qt483/bin/qmake for PC build).
+
+Be sure to have the cross tools in the path when building for the PB since I
+deliberately chose not to include path in mkspec.
+
+inienvarm and inienvpc are initialization scripts you have to adapt.
+You can then source the appropriate one to get proper development environment
+depending on the target.

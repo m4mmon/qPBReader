@@ -1,0 +1,19 @@
+#!/bin/sh
+# config
+QT4=/usr/local/Qt486
+
+
+
+# used in some .pro as a component of the path to the appropriate xslt sdk dir
+export XSLT_BUILD=pc
+
+
+
+
+# add qt tools in path
+export PATH=$QT4/bin:$PATH
+
+
+# for qPBReader conf
+export qPBReaderConfFile=~/svnfiles/qPBReader/data/test.conf
+export FONTCONFIG_FILE=~/svnfiles/qPBReader/_fonts/fonts.conf
